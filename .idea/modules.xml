@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/delloite- crud.iml" filepath="$PROJECT_DIR$/delloite- crud.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bootcamo-delloite.iml" filepath="$PROJECT_DIR$/bootcamo-delloite.iml" />
     </modules>
   </component>
 </project>
