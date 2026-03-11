@@ -3,9 +3,11 @@ package com.sistema.usuarios.service.impl;
 import com.sistema.usuarios.dto.UsuarioRequestDto;
 import com.sistema.usuarios.dto.UsuarioResponseDto;
 import com.sistema.usuarios.entities.Usuario;
+import com.sistema.usuarios.exception.ListaUsuariosVaziaException;
+import com.sistema.usuarios.exception.UsuarioNotFoundException;
+import com.sistema.usuarios.mapper.UsuarioMapper;
 import com.sistema.usuarios.repository.UsuarioRepository;
 import com.sistema.usuarios.service.UsuarioService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,38 +15,38 @@ import java.util.List;
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
 
-    @Autowired
-    UsuarioRepository repository;
+    private final UsuarioRepository repository;
+    private final UsuarioMapper usuarioMapper;
+
+    public UsuarioServiceImpl(UsuarioRepository repository, UsuarioMapper usuarioMapper) {
+        this.repository = repository;
+        this.usuarioMapper = usuarioMapper;
+    }
 
     @Override
     public UsuarioResponseDto criarUsuario(UsuarioRequestDto usuarioRequestDto) {
-        Usuario usuario = new Usuario();
-        usuario.setCpf(usuarioRequestDto.cpf());
-        usuario.setNome(usuarioRequestDto.nome());
-        usuario.setEmail(usuarioRequestDto.email());
-        usuario.setSenha(usuarioRequestDto.senha());
+
+        if (repository.existsByEmail(usuarioRequestDto.email())) {
+            throw new RuntimeException("Email já cadastrado");
+        }
+        if (repository.existsByCpf((usuarioRequestDto.cpf()))) {
+            throw new RuntimeException("CPF já cadastrado");
+        }
+
+        Usuario usuario = usuarioMapper.toEntity(usuarioRequestDto);
 
         repository.save(usuario);
-        return new UsuarioResponseDto(
-                usuario.getId(),
-                usuario.getNome(),
-                usuario.getEmail(),
-                usuario.getCpf()
-        );
+
+        return usuarioMapper.toResponseDto(usuario);
     }
 
     @Override
     public UsuarioResponseDto buscarUsuarioId(Long id) {
 
         Usuario usuario = repository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Usuário não encontrado") );
+                .orElseThrow(()-> new UsuarioNotFoundException(id));
 
-        return new UsuarioResponseDto(
-                usuario.getId(),
-                usuario.getNome(),
-                usuario.getEmail(),
-                usuario.getCpf()
-        );
+        return usuarioMapper.toResponseDto(usuario);
     }
 
     @Override
@@ -53,23 +55,18 @@ public class UsuarioServiceImpl implements UsuarioService {
         List<Usuario> usuarios = repository.findAll();
 
         if (usuarios.isEmpty()) {
-            throw new RuntimeException("Nenhum usuário encontrado");
+            throw new ListaUsuariosVaziaException();
         }
 
         return usuarios.stream()
-                .map(usuario -> new UsuarioResponseDto(
-                        usuario.getId(),
-                        usuario.getNome(),
-                        usuario.getEmail(),
-                        usuario.getCpf()
-                ))
+                .map(usuarioMapper::toResponseDto)
                 .toList();
     }
 
     @Override
     public void deletarUsuarioID(Long id) {
         Usuario usuario = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new UsuarioNotFoundException(id));
 
         repository.delete(usuario);
 
@@ -78,22 +75,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioResponseDto atualizarUsuarioId(Long id, UsuarioRequestDto usuarioRequestDto) {
         Usuario usuario = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new UsuarioNotFoundException(id));
 
-        usuario.setNome(usuarioRequestDto.nome());
-        usuario.setEmail(usuarioRequestDto.email());
-        usuario.setCpf(usuarioRequestDto.cpf());
-        usuario.setSenha(usuarioRequestDto.senha());
+        usuarioMapper.updateEntityFromDto(usuarioRequestDto , usuario);
 
         Usuario usuarioAtualizado = repository.save(usuario);
-
-        return new UsuarioResponseDto(
-                usuarioAtualizado.getId(),
-                usuarioAtualizado.getNome(),
-                usuarioAtualizado.getEmail(),
-                usuarioAtualizado.getCpf()
-        );
-
+        return usuarioMapper.toResponseDto(usuarioAtualizado);
     }
 
 }

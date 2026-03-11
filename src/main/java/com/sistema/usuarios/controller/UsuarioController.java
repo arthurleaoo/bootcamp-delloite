@@ -24,7 +24,7 @@ public class UsuarioController {
 
     @Operation(summary = "Cria usuários")
     @PostMapping
-    public UsuarioResponseDto criar(@RequestBody @Valid UsuarioRequestDto usuarioRequestDtodto){
+    public UsuarioResponseDto criarUsuario(@RequestBody @Valid UsuarioRequestDto usuarioRequestDtodto){
         return usuarioService.criarUsuario(usuarioRequestDtodto);
     }
 

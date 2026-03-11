@@ -11,9 +11,15 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long id;
+
     public String nome;
+
+    @Column(unique = true)
     public String cpf;
+
+    @Column(unique = true)
     public String email;
+
     public String senha;
 
 

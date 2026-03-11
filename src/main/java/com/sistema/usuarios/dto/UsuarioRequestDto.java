@@ -11,6 +11,7 @@ public record UsuarioRequestDto(
         String nome,
 
         @NotBlank(message = "CPF é obrigatório")
+        @Size(min = 11, max = 11, message = "O CPF deve ter 11 caracteres")
         @Schema(example = "12345678910")
         String cpf,
 
