@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gerenciador de Usuários</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet" />
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+            background-color: #f8f9fa;
+        }
+        .navbar-brand {
+            padding-top: .75rem;
+            padding-bottom: .75rem;
+            background-color: rgba(0, 0, 0, .25);
+        }
+    </style>
+</head>
+<body>
+
+<header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow" data-bs-theme="dark">
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="#">Gerenciamento</a>
+</header>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav class="sidebar col-md-3 col-lg-2 p-0">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2 active" href="#">
+                            Lista de usuários
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2" href="#" data-bs-toggle="modal" data-bs-target="#modalCadastro">
+                            Cadastrar novo usuário
+                        </a>
+                    </li>
+                </ul>
+                <hr class="my-3" />
+                <ul class="nav flex-column mb-auto">
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2" href="#" data-bs-toggle="modal" data-bs-target="#modalBuscaId">
+                            Buscar por ID
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Usuários</h1>
+            </div>
+
+            <div class="table-responsive small">
+                <table class="table table-striped table-sm">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>CPF</th>
+                        <th>Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tabela-usuarios">
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div class="modal fade" id="modalBuscaId" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow border-0">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title">Consultar Usuário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="input-group mb-3">
+                    <span class="input-group-text bg-white">ID</span>
+                    <input type="number" id="inputBuscaId" class="form-control" placeholder="Ex: 123">
+                    <button class="btn btn-primary" type="button" onclick="executarBuscaPorId()">Pesquisar</button>
+                </div>
+                <div id="resultadoBusca" class="card d-none border-info">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary" id="resNome"></h5>
+                        <hr>
+                        <p class="mb-1"><strong>E-mail:</strong> <span id="resEmail"></span></p>
+                        <p><strong>CPF:</strong> <span id="resCpf"></span></p>
+                        <div class="d-grid mt-3">
+                            <button class="btn btn-sm btn-outline-warning" onclick="abrirEdicaoDoBusca()">Editar Cadastro</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="erroBusca" class="alert alert-danger d-none mt-3">Usuário não encontrado.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalCadastro" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow border-0">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title">Novo Usuário</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="formCadastro">
+                    <div class="mb-3">
+                        <label for="cadNome" class="form-label">Nome Completo</label>
+                        <input type="text" class="form-control" id="cadNome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cadCpf" class="form-label">CPF</label>
+                        <input type="text" class="form-control" id="cadCpf" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cadEmail" class="form-label">E-mail</label>
+                        <input type="email" class="form-control" id="cadEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cadSenha" class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="cadSenha" required>
+                    </div>
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="button" class="btn btn-primary" onclick="salvarNovoUsuario()">Salvar Usuário</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/dashboard.js"></script>
+</body>
+</html>

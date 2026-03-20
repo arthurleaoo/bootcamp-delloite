@@ -4,7 +4,6 @@ import com.sistema.usuarios.dto.UsuarioRequestDto;
 import com.sistema.usuarios.dto.UsuarioResponseDto;
 import com.sistema.usuarios.entities.Usuario;
 import com.sistema.usuarios.exception.DadosDuplicadosException;
-import com.sistema.usuarios.exception.ListaUsuariosVaziaException;
 import com.sistema.usuarios.exception.UsuarioNotFoundException;
 import com.sistema.usuarios.mapper.UsuarioMapper;
 import com.sistema.usuarios.repository.UsuarioRepository;
@@ -203,7 +202,7 @@ class UsuarioServiceImplTest {
         when(repository.findAll())
                 .thenReturn(Collections.emptyList());
 
-        assertThrows(ListaUsuariosVaziaException.class,
+        assertThrows(RecursoNaoEncontradoException.class,
                 ()->service.listarUsuarios());
 
     }

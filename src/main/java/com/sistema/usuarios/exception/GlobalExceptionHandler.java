@@ -23,18 +23,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
     }
 
-    @ExceptionHandler(ListaUsuariosVaziaException.class)
-    public ResponseEntity<Map<String, Object>> listaVazia(ListaUsuariosVaziaException ex){
-
-        Map<String, Object> erro = new HashMap<>();
-        erro.put("timestamp", LocalDateTime.now());
-        erro.put("status", HttpStatus.NOT_FOUND.value());
-        erro.put("erro", ex.getMessage());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
-    }
-
-
     @ExceptionHandler(DadosDuplicadosException.class)
     public ResponseEntity<Map<String, Object>> dadosDuplicados(DadosDuplicadosException ex){
 

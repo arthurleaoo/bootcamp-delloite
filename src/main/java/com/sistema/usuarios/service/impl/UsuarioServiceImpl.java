@@ -3,17 +3,16 @@ package com.sistema.usuarios.service.impl;
 import com.sistema.usuarios.dto.UsuarioRequestDto;
 import com.sistema.usuarios.dto.UsuarioResponseDto;
 import com.sistema.usuarios.entities.Usuario;
-import com.sistema.usuarios.exception.ListaUsuariosVaziaException;
 import com.sistema.usuarios.exception.UsuarioNotFoundException;
 import com.sistema.usuarios.mapper.UsuarioMapper;
 import com.sistema.usuarios.repository.UsuarioRepository;
 import com.sistema.usuarios.service.UsuarioService;
 import com.sistema.usuarios.validation.UsuarioValidator;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -58,10 +57,6 @@ public class UsuarioServiceImpl implements UsuarioService {
     public List<UsuarioResponseDto> listarUsuarios() {
 
         List<Usuario> usuarios = repository.findAll();
-
-        if (usuarios.isEmpty()) {
-            throw new ListaUsuariosVaziaException();
-        }
 
         return usuarios.stream()
                 .map(usuarioMapper::toResponseDto)
